@@ -77,7 +77,8 @@ Run the script:
 ```bash
 python make_overlay.py
 ```
-*** NOTE: The longer the video, the longer this process takes. A ~45 minute video at 30 frames per second requires ~81,000 frames to be rendered.
+*** NOTE: The longer the video, the longer this process takes. A ~45 minute video at 30 frames per second requires ~81,000 frames to be rendered. ***
+
 You'll see progress output like:
 
 ```
@@ -152,41 +153,11 @@ fonts = {
 
 ## Troubleshooting
 
-### "No module named 'fitparse'" Error
-
-Install the missing package:
-```bash
-pip install fitparse
-```
-
-### "Failed to open video writer" Error
-
-This usually means OpenCV doesn't have the required codecs. Try:
-```bash
-pip install opencv-python --upgrade
-```
-
-Or change the codec in the script:
-```python
-fourcc = cv2.VideoWriter_fourcc(*'avc1')  # Try different codecs: 'avc1', 'H264', 'XVID'
-```
-
 ### Video is Too Long to Process
 
 Reduce the frame rate for faster rendering:
 ```python
 FPS = 24  # Instead of 30 or 60
-```
-
-### GPS Map Not Showing
-
-Check that your FIT file contains GPS data. Some indoor trainer rides may not have location data.
-
-### Fonts Look Wrong
-
-The script tries to use system fonts. If unavailable, it falls back to default. You can specify a custom font path:
-```python
-return ImageFont.truetype("/path/to/your/font.ttf", size)
 ```
 
 ### Memory Issues with Long Rides
@@ -242,19 +213,3 @@ Feel free to fork this repository and submit pull requests with improvements!
 ## License
 
 This project is open source and available under the MIT License.
-
-## Credits
-
-Created for cyclists who want to add professional-looking data overlays to their ride videos.
-
-## Support
-
-If you encounter issues:
-1. Check the Troubleshooting section above
-2. Verify your FIT file is valid
-3. Ensure all dependencies are installed
-4. Open an issue on GitHub with error details
-
----
-
-Happy riding and creating awesome cycling videos!
