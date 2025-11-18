@@ -363,44 +363,62 @@ def draw_gps_map(draw, r, all_points, trail_cache, stats, smooth_state):
     if len(all_points) > 1:
         draw.line(all_points, fill=(70, 70, 70), width=3)
 
-    # Completed trail in cyan - find closest timestamp
-    current_t = r.get("t", 0)
+    # Get current GPS position from record
+    current_lat = r.get("lat")
+    current_lon = r.get("lon")
 
-    # Find the closest cached trail (interpolate between cached points)
-    trail = None
-    for cached_t, cached_trail in sorted(trail_cache.items()):
-        if cached_t <= current_t:
-            trail = cached_trail
-        else:
-            break
+    if current_lat and current_lon:
+        # Project current position to screen coordinates
+        min_lat, max_lat = stats["min_lat"], stats["max_lat"]
+        min_lon, max_lon = stats["min_lon"], stats["max_lon"]
 
-    # Always draw trail if we have any
-    if trail and len(trail) > 1:
-        draw.line(trail, fill=(0, 255, 255), width=5)
+        lat_span = max_lat - min_lat or 1.0
+        lon_span = max_lon - min_lon or 1.0
 
-    # Current position marker - keep last known position if GPS data missing
-    if trail and len(trail) > 0:
-        px, py = trail[-1]
+        u = (current_lon - min_lon) / lon_span
+        v = (current_lat - min_lat) / lat_span
+        px = x0 + u * size
+        py = y0 + size - v * size
 
-        # Initialize or update smoothed position
+        # Initialize or update smoothed position with stronger smoothing
         if "gps_x" not in smooth_state or "gps_y" not in smooth_state:
             smooth_state["gps_x"], smooth_state["gps_y"] = px, py
+            smooth_state["trail_points"] = [(px, py)]
         else:
-            # Smooth the position
-            smooth_state["gps_x"] = smooth_value(smooth_state["gps_x"], px, 0.3)
-            smooth_state["gps_y"] = smooth_value(smooth_state["gps_y"], py, 0.3)
+            # Smooth the position more aggressively for fluid motion
+            smooth_state["gps_x"] = smooth_value(smooth_state["gps_x"], px, 0.25)
+            smooth_state["gps_y"] = smooth_value(smooth_state["gps_y"], py, 0.25)
 
+            # Add smoothed position to trail
+            new_point = (smooth_state["gps_x"], smooth_state["gps_y"])
+            if "trail_points" not in smooth_state:
+                smooth_state["trail_points"] = [new_point]
+            else:
+                smooth_state["trail_points"].append(new_point)
+
+        # Draw the smoothed trail
+        trail_points = smooth_state.get("trail_points", [])
+        if len(trail_points) > 1:
+            draw.line(trail_points, fill=(0, 255, 255), width=5)
+
+        # Draw current position marker
         cx, cy = smooth_state["gps_x"], smooth_state["gps_y"]
-
-        # Always draw marker (no flashing)
         radius = 7
         draw.ellipse((cx - radius - 1, cy - radius - 1, cx + radius + 1, cy + radius + 1),
                     fill=(255, 255, 255))
         draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius),
                     fill=(255, 215, 0))
+
     elif "gps_x" in smooth_state and "gps_y" in smooth_state:
         # Keep drawing at last known position if GPS data is missing
         cx, cy = smooth_state["gps_x"], smooth_state["gps_y"]
+
+        # Draw existing trail
+        trail_points = smooth_state.get("trail_points", [])
+        if len(trail_points) > 1:
+            draw.line(trail_points, fill=(0, 255, 255), width=5)
+
+        # Draw marker at last position
         radius = 7
         draw.ellipse((cx - radius - 1, cy - radius - 1, cx + radius + 1, cy + radius + 1),
                     fill=(255, 255, 255))
