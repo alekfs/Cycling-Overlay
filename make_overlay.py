@@ -7,7 +7,7 @@ import time
 
 # ---------- CONFIG ----------
 FIT_FILENAME = "ride.fit"
-OUTPUT_VIDEO = "overlay_green_clean.mp4"
+OUTPUT_VIDEO = "overlay_greenscreen.mp4"
 WIDTH, HEIGHT = 1920, 1080
 FPS = 30  # 30fps for faster rendering
 
@@ -477,7 +477,7 @@ def main():
     last_index = 0
     last_update = time.time()
 
-    print(f"\nRendering clean overlay...\n")
+    print(f"\nRendering overlay...\n")
 
     for frame in range(total_frames):
         t = frame / FPS
@@ -511,7 +511,7 @@ def main():
 
     writer.release()
     total = time.time() - start_time
-    print(f"\n✓ Clean overlay complete in {total / 60:.1f} minutes!")
+    print(f"\n✓ Overlay complete in {total / 60:.1f} minutes!")
     print(f"  Output: {OUTPUT_VIDEO}")
 
 
