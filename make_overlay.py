@@ -319,7 +319,7 @@ def draw_cadence_gauge(draw, cx, cy, r, stats, fonts, smooth_state):
 
 
 def draw_heart_rate(draw, r, stats, fonts, smooth_state):
-    """Heart rate - top center, no overlap"""
+    """Heart rate - bottom center, above power bar"""
     hr = r.get("heart_rate")
     if hr is not None:
         smooth_state["hr"] = smooth_value(smooth_state.get("hr", hr), hr, 0.2)
@@ -331,13 +331,16 @@ def draw_heart_rate(draw, r, stats, fonts, smooth_state):
     frac = clamp01((display_hr or 0) / max_hr)
     color = lerp_color(HR_COLOR_LOW, HR_COLOR_HIGH, frac)
 
-    # Position - top center (well above power)
+    # Position - bottom center, above power bar with padding
     cx = WIDTH // 2
-    y = 80  # Top of screen
+    power_bar_top = HEIGHT - 120
 
     if display_hr:
         hr_txt = str(int(round(display_hr)))
         w, h = get_text_bbox(draw, hr_txt, fonts["medium"])
+
+        # Position with padding above power numbers (power numbers are above bar)
+        y = power_bar_top - h - 100  # 100px padding above power number area
 
         # Just the heart rate number with shadow
         draw_text_with_shadow(draw, (cx - w / 2, y), hr_txt, fonts["medium"], color, 3)
