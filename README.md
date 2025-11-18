@@ -4,7 +4,7 @@ Create professional-looking cycling data overlays for your ride videos using FIT
 
 ## Features
 
-- **Power Bar**: Vibrant gradient power display with smooth animations
+- **Power**: Vibrant gradient power display with smooth animations
 - **Speed Gauge**: Circular gauge showing current speed in km/h
 - **Cadence Gauge**: RPM display with color-coded intensity
 - **Heart Rate Monitor**: BPM display with dynamic color coding
@@ -32,16 +32,7 @@ Before you begin, ensure you have the following installed:
 
 ## Installation
 
-### 1. Clone or Download the Repository
-
-```bash
-git clone https://github.com/yourusername/cyclingoverlay.git
-cd cyclingoverlay
-```
-
-Or download and extract the ZIP file.
-
-### 2. Install Required Python Packages
+###  1. Install Required Python Packages
 
 ```bash
 pip install fitparse pillow opencv-python numpy
@@ -53,7 +44,7 @@ pip install fitparse pillow opencv-python numpy
 - `opencv-python`: Video generation
 - `numpy`: Numerical operations
 
-### 3. Verify Installation
+### 2. Verify Installation
 
 Check that all packages are installed correctly:
 
@@ -65,16 +56,16 @@ python -c "import fitparse, PIL, cv2, numpy; print('All packages installed succe
 
 ### 1. Prepare Your FIT File
 
-Export a FIT file from your cycling computer or training platform (Garmin, Wahoo, Strava, etc.). Place it in the project directory.
+Place FIT file from your race in the project directory and name it `ride.fit`
 
 ### 2. Configure the Script
 
-Open `make_overlay_clean.py` and modify the configuration section at the top:
+Open `make_overlay.py` and modify the configuration section at the top:
 
 ```python
 # ---------- CONFIG ----------
 FIT_FILENAME = "ride.fit"          # Your FIT file name
-OUTPUT_VIDEO = "overlay_green_clean.mp4"  # Output video name
+OUTPUT_VIDEO = "overlay_greenscreen.mp4"  # Output video name
 WIDTH, HEIGHT = 1920, 1080         # Video resolution
 FPS = 30                            # Frames per second
 ```
@@ -84,9 +75,9 @@ FPS = 30                            # Frames per second
 Run the script:
 
 ```bash
-python make_overlay_clean.py
+python make_overlay.py
 ```
-
+*** NOTE: The longer the video, the longer this process takes. A ~45 minute video at 30 frames per second requires ~81,000 frames to be rendered.
 You'll see progress output like:
 
 ```
@@ -95,7 +86,7 @@ Ride: 45.2 min | Frames: 81,360 @ 30 fps
 Pre-processing...
 Initializing video writer...
 
-Rendering clean overlay...
+Rendering overlay...
 
   12.5% | Frame 10,170/81,360 | 25.3 fps | ETA: 2.8 min
   ...
@@ -103,47 +94,13 @@ Rendering clean overlay...
 
 ### 4. Find Your Output
 
-The generated video will be saved as `overlay_green_clean.mp4` (or your specified filename) in the same directory.
-
-## Overlaying on Your Ride Video
-
-### Using DaVinci Resolve
-
-1. Import both your ride video and the generated overlay
-2. Place the overlay on a track above your ride video
-3. Add the **Chroma Key** effect to the overlay track
-4. Select green as the key color
-5. Adjust settings for clean edges
-
-### Using Adobe Premiere Pro
-
-1. Import both videos
-2. Place overlay above your main footage
-3. Add **Ultra Key** effect to overlay
-4. Use eyedropper to select the green background
-5. Fine-tune with matte settings
-
-### Using Final Cut Pro
-
-1. Import both clips
-2. Stack overlay above main video
-3. Apply **Keyer** effect
-4. Select green screen
-5. Adjust edge refinement
-
-### Using OBS (For Live Streaming)
-
-1. Add your ride video as a **Media Source**
-2. Add the overlay as another **Media Source**
-3. Right-click overlay > **Filters** > **Chroma Key**
-4. Set key color to green
-5. Adjust similarity and smoothness
+The generated video will be saved as `overlay_greenscreen.mp4` in the same directory.
 
 ## Customization
 
 ### Color Schemes
 
-Edit the color definitions in `make_overlay_clean.py`:
+Edit the color definitions in `make_overlay.py`:
 
 ```python
 # Power gradient colors
@@ -250,9 +207,9 @@ The script processes the entire ride. For very long rides (3+ hours), consider:
 
 ```
 cyclingoverlay/
-├── make_overlay_clean.py      # Main script
+├── make_overlay.py      # Main script
 ├── ride.fit                    # Your FIT file (add this)
-├── overlay_green_clean.mp4    # Generated output
+├── overlay_greenscreen.mp4    # Generated output
 └── README.md                   # This file
 ```
 
